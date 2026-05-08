@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex - Pokémon Artani</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body.lang-en .lang-es { display: none !important; }
+        body.lang-es .lang-en { display: none !important; }
+
+        /* Estilos específicos de la Pokédex */
+        .pokedex-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .poke-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, border-color 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .poke-card:hover {
+            transform: translateY(-5px);
+            border-color: #bc84ee;
+        }
+
+        .poke-img-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #334155;
+        }
+
+        .poke-img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            image-rendering: pixelated;
+        }
+
+        .poke-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #f8fafc;
+            margin-bottom: 10px;
+        }
+
+        .poke-types {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .type-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .poke-desc {
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            min-height: 60px;
+        }
+
+        /* Barras de Estadísticas */
+        .stats-container {
+            text-align: left;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        .stat-name { width: 45px; color: #94a3b8; font-weight: bold; }
+        .stat-val { width: 35px; color: #f8fafc; text-align: right; margin-right: 10px; }
+        .stat-bar-bg {
+            flex-grow: 1;
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .stat-bar-fill { height: 100%; border-radius: 4px; }
+
+        .bg-hp { background: #ef4444; }
+        .bg-atk { background: #f97316; }
+        .bg-def { background: #eab308; }
+        .bg-spa { background: #3b82f6; }
+        .bg-spd { background: #22c55e; }
+        .bg-vel { background: #ec4899; }
+    </style>
+</head>
+
+<body class="lang-es">
+
+    <div class="lang-toggle">
+        <button id="btn-es" class="lang-btn active" onclick="setLanguage('es')">ES</button>
+        <button id="btn-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
+    </div>
+
+    <header class="main-header">
+        <h1>Pokémon Artani - Wiki Oficial</h1>
+        <div class="main-nav">
+            <a href="index.html" class="main-tab"><span class="lang-es">Inicio / Descarga</span><span class="lang-en">Home / Download</span></a>
+            <a href="historia.html" class="main-tab"><span class="lang-es">Historia y Lore</span><span class="lang-en">History & Lore</span></a>
+            <a href="manual.html" class="main-tab"><span class="lang-es">Manual de Juego</span><span class="lang-en">Game Manual</span></a>
+            <a href="grimorio.html" class="main-tab"><span class="lang-es">Guía de Combate</span><span class="lang-en">Combat Guide</span></a>
+            <a href="pokedex.html" class="main-tab active-tab"><span class="lang-es">Pokédex Artani</span><span class="lang-en">Artani Pokédex</span></a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content-box" style="text-align: center;">
+            <h2 style="border: none; margin: 0;">
+                <span class="lang-es">Registro de Seres Espirituales</span>
+                <span class="lang-en">Spiritual Beings Registry</span>
+            </h2>
+            <p style="color: #94a3b8; font-size: 14px; margin-top: 5px;">
+                <span class="lang-es">Datos recopilados por la Anomalía dentro del Bucle del Arquitecto.</span>
+                <span class="lang-en">Data collected by the Anomaly within the Architect's Loop.</span>
+            </p>
+        </div>
+
+        <div id="pokedex-container" class="pokedex-grid"></div>
+    </div>
+
+    <script>
+        const typesConfig = {
+            "Normal": { es: "Normal", en: "Normal", color: "#A8A878" },
+            "Fuego": { es: "Fuego", en: "Fire", color: "#F08030" },
+            "Agua": { es: "Agua", en: "Water", color: "#6890F0" },
+            "Planta": { es: "Planta", en: "Grass", color: "#78C850" },
+            "Electrico": { es: "Eléctrico", en: "Electric", color: "#F8D030" },
+            "Hielo": { es: "Hielo", en: "Ice", color: "#98D8D8" },
+            "Lucha": { es: "Lucha", en: "Fighting", color: "#C03028" },
+            "Veneno": { es: "Veneno", en: "Poison", color: "#A040A0" },
+            "Tierra": { es: "Tierra", en: "Ground", color: "#E0C068" },
+            "Volador": { es: "Volador", en: "Flying", color: "#A890F0" },
+            "Psiquico": { es: "Psíquico", en: "Psychic", color: "#F85888" },
+            "Bicho": { es: "Bicho", en: "Bug", color: "#A8B820" },
+            "Roca": { es: "Roca", en: "Rock", color: "#B8A038" },
+            "Fantasma": { es: "Fantasma", en: "Ghost", color: "#705898" },
+            "Dragon": { es: "Dragón", en: "Dragon", color: "#7038F8" },
+            "Acero": { es: "Acero", en: "Steel", color: "#B8B8D0" },
+            "Hada": { es: "Hada", en: "Fairy", color: "#EE99AC" },
+            "Siniestro": { es: "Siniestro", en: "Dark", color: "#705848" },
+            "Lunar": { es: "Lunar", en: "Lunar", color: "#87CEFA" },
+            "Sangre": { es: "Sangre", en: "Blood", color: "#990000" },
+            "Oscuridad": { es: "Oscuridad", en: "Darkness", color: "#4B0082" }
+        };
+
+        const pokedexDB = [
+            { name: "Abracitos", t1: "Normal", t2: "Lucha", hp: 120, atk: 110, def: 110, spa: 60, spd: 110, vel: 90, desc: { 
+                es: "Un ente perturbador con apariencia de muñeco inofensivo, coronado por una rueda mística que levita a su espalda. Carece de alma y de piedad. No importa con qué lo ataques; si la rueda gira, su cuerpo se reescribe para anular por completo tu poder.", 
+                en: "A disturbing entity with the appearance of a harmless doll, crowned by a mystic wheel levitating behind its back. It lacks a soul and mercy. It matters not what you attack it with; if the wheel turns, its body rewrites itself to completely nullify your power." 
+            }},
+            { name: "Khornigon", t1: "Sangre", t2: "Fuego", hp: 105, atk: 140, def: 140, spa: 90, spd: 80, vel: 80, desc: { 
+                es: "Una bestia nacida de la violencia pura del bucle. Su piel está blindada con la sangre seca de las innumerables criaturas que ha masacrado. No siente dolor, solo rabia. Cuando su cuerpo llega al límite, su instinto berserker despierta su verdadera y terrorífica forma.", 
+                en: "A beast born from the pure violence of the loop. Its skin is armored with the dried blood of countless creatures it has massacred. It feels no pain, only rage. When its body reaches its limit, its berserker instinct awakens its true and terrifying form." 
+            }},
+            { name: "Andrigon", t1: "Oscuridad", t2: "Fantasma", hp: 90, atk: 255, def: 85, spa: 90, spd: 85, vel: 120, desc: { 
+                es: "El General Caído. Uno de los Tres Monarcas del Mundo Espiritual. En las antiguas guerras cósmicas entre la Luz y la Oscuridad, Andrigon lideraba las vanguardias hasta que su reino fue devorado por las sombras. Ahora es una armadura espectral animada por puro deber y resentimiento hacia la simulación del Arquitecto. Él no busca la falsa paz del estancamiento, sino regresar al caos del exterior para terminar su última batalla. Su espada pesada es capaz de rasgar el código mismo del Bucle, recordando a la Anomalía que la verdadera guerra aún aguarda afuera, y que esconderse no es una opción.", 
+                en: "The Fallen General. One of the Three Monarchs of the Spiritual World. In the ancient cosmic wars between Light and Darkness, Andrigon led the vanguards until his kingdom was devoured by shadows. Now he is a spectral armor animated by pure duty and resentment towards the Architect's simulation. He does not seek the false peace of stagnation, but to return to the chaos outside to finish his last battle. His heavy sword can tear the very code of the Loop, reminding the Anomaly that the true war still awaits outside, and hiding is not an option." 
+            }},
+            { name: "Lunaris", t1: "Lunar", t2: "Dragon", hp: 105, atk: 80, def: 95, spa: 130, spd: 110, vel: 80, desc: { 
+                es: "La Dragona de la Luna. Una de las Tres Monarcas y la encarnación de los ciclos naturales que el Arquitecto intentó borrar. Mientras el Bucle se mantiene en una iteración constante e inmutable, la luz astral de Lunaris representa el flujo del tiempo del verdadero Mundo Espiritual. Sus alas albergan el reflejo de los cielos y mares infinitos que quedaron fuera de esta prisión. Luchar contra ella y forjar un pacto es demostrar que estás dispuesto a abandonar la seguridad de la jaula para devolverle al universo su luz, asumiendo el terrible riesgo de que la Oscuridad vuelva a perseguirla.", 
+                en: "The Dragon of the Moon. One of the Three Monarchs and the incarnation of the natural cycles that the Architect tried to erase. While the Loop remains in a constant and immutable iteration, Lunaris' astral light represents the flow of time of the true Spiritual World. Her wings harbor the reflection of the infinite skies and seas left outside this prison. Fighting her and forging a pact proves that you are willing to abandon the safety of the cage to return its light to the universe, assuming the terrible risk that Darkness will pursue it once more." 
+            }},
+            { name: "Vladmir", t1: "Sangre", t2: "Oscuridad", hp: 110, atk: 105, def: 95, spa: 105, spd: 120, vel: 65, desc: { 
+                es: "El Rey Carmesí. El tercer Monarca, un ser antiguo que prosperaba en las sombras del Mundo Espiritual antes de que la cuarentena de cristal congelara la realidad. A diferencia del Arquitecto, Vladmir abraza la Oscuridad no como un defecto a erradicar, sino como una parte vital del equilibrio de la existencia. Su presencia es un recordatorio constante de los terrores que habitan más allá del Bucle. Pactar con él enseña a la Anomalía una lección crucial: para sobrevivir en el vasto universo exterior, uno no debe temerle a la noche, sino aprender a gobernar sus propias sombras.", 
+                en: "The Crimson King. The third Monarch, an ancient being who thrived in the shadows of the Spiritual World before the crystal quarantine froze reality. Unlike the Architect, Vladmir embraces Darkness not as a flaw to eradicate, but as a vital part of the balance of existence. His presence is a constant reminder of the terrors dwelling beyond the Loop. Pacting with him teaches the Anomaly a crucial lesson: to survive in the vast outer universe, one must not fear the night, but learn to rule their own shadows." 
+            }},
+            { name: "Deino", t1: "Oscuridad", t2: "Dragon", hp: 52, atk: 65, def: 50, spa: 45, spd: 50, vel: 38, desc: { 
+                es: "Una criatura errante nacida de los ecos de la guerra eterna. Su instinto constante de morder, chocar y luchar es un vestigio del caos puro del Mundo Espiritual que el Arquitecto no pudo limpiar del todo al crear el Bucle. Actúa movido por una memoria genética de tiempos más salvajes.", 
+                en: "A wandering creature born from the echoes of the eternal war. Its constant instinct to bite, crash, and fight is a vestige of the pure chaos of the Spiritual World that the Architect could not fully clean when creating the Loop. It acts driven by a genetic memory of wilder times." 
+            }},
+            { name: "Eevee", t1: "Normal", t2: "Ninguno", hp: 55, atk: 55, def: 50, spa: 45, spd: 65, vel: 55, desc: { 
+                es: "Conocido por el Arquitecto como 'La Variable Inestable'. En un Bucle donde todo está programado para repetirse exactamente igual, la mutación genética de Eevee es una aberración fascinante. Representa la pura libertad de elección, la capacidad de adaptarse a múltiples futuros posibles, desafiando el estancamiento perfecto del sistema.", 
+                en: "Known by the Architect as 'The Unstable Variable'. In a Loop where everything is programmed to repeat exactly the same, Eevee's genetic mutation is a fascinating aberration. It represents the pure freedom of choice, the ability to adapt to multiple possible futures, challenging the perfect stagnation of the system." 
+            }},
+            { name: "Foongus", t1: "Planta", t2: "Veneno", hp: 69, atk: 55, def: 45, spa: 55, spd: 55, vel: 15, desc: { 
+                es: "Una anomalía biológica que imita las herramientas del sistema para pasar desapercibido. Crece en las zonas de sombra donde el código del Bucle es más débil.", 
+                en: "A biological anomaly that imitates the system's tools to go unnoticed. It grows in shadow zones where the Loop's code is weakest." 
+            }},
+            { name: "Gible", t1: "Dragon", t2: "Tierra", hp: 58, atk: 70, def: 45, spa: 40, spd: 45, vel: 42, desc: { 
+                es: "Crías de dragón que muerden todo lo que brilla. Se sienten atraídos por la luz del Bucle, creyendo erróneamente que es el sol del Mundo Espiritual original. Son tercos y se niegan a aceptar la derrota.", 
+                en: "Dragon hatchlings that bite everything that shines. They are attracted by the light of the Loop, mistakenly believing it is the sun of the original Spiritual World. They are stubborn and refuse to accept defeat." 
+            }},
+            { name: "Houndour", t1: "Siniestro", t2: "Fuego", hp: 45, atk: 60, def: 30, spa: 80, spd: 50, vel: 65, desc: { 
+                es: "Sabuesos que patrullaban las oscuras fronteras de los antiguos reinos. Sus aullidos resuenan como un error de sistema dentro del Bucle, recordando a quienes los escuchan que el peligro y el fin absoluto aún existen más allá de las paredes de cristal que los protegen.", 
+                en: "Hounds that patrolled the dark borders of ancient kingdoms. Their howls resonate like a system error within the Loop, reminding those who hear them that danger and absolute end still exist beyond the glass walls protecting them." 
+            }},
+            { name: "Litten", t1: "Fuego", t2: "Siniestro", hp: 45, atk: 65, def: 40, spa: 60, spd: 40, vel: 70, desc: { 
+                es: "Un pequeño felino que prefiere la soledad de las sombras. En su interior arde una chispa del 'Fuego Verdadero' del exterior, una llama que no se apaga aunque el tiempo se detenga.", 
+                en: "A small feline that prefers the solitude of the shadows. Inside it burns a spark of the 'True Fire' from the outside, a flame that does not extinguish even if time stops." 
+            }},
+            { name: "Sandile", t1: "Tierra", t2: "Siniestro", hp: 50, atk: 72, def: 35, spa: 35, spd: 35, vel: 65, desc: { 
+                es: "Pequeños carroñeros que habitan en las fronteras del Bucle. Se entierran bajo la arena espiritual, esperando a que la 'moneda' del Arquitecto caiga para moverse durante el breve instante de oscuridad entre reinicios.", 
+                en: "Small scavengers that inhabit the borders of the Loop. They bury themselves under the spiritual sand, waiting for the Architect's 'coin' to fall to move during the brief instant of darkness between resets." 
+            }},
+            { name: "Swinub", t1: "Hielo", t2: "Tierra", hp: 50, atk: 50, def: 40, spa: 30, spd: 30, vel: 50, desc: { 
+                es: "Pequeños seres que buscan calor en un mundo de escarcha espiritual. Su nariz puede detectar presencias incluso a través de las paredes de cristal del Bucle.", 
+                en: "Small beings seeking warmth in a world of spiritual frost. Their nose can detect presences even through the glass walls of the Loop." 
+            }},
+            { name: "Zubat", t1: "Veneno", t2: "Volador", hp: 40, atk: 45, def: 35, spa: 30, spd: 40, vel: 55, desc: { 
+                es: "Acostumbrados a navegar en la profunda inmensidad del Mundo Espiritual, dentro del Bucle se sienten atrapados por la falta de un ecosistema real. Vuelan de forma errática, buscando incesantemente una verdadera noche que la simulación del sistema se niega a proporcionarles.", 
+                en: "Accustomed to navigating the deep immensity of the Spiritual World, inside the Loop they feel trapped by the lack of a real ecosystem. They fly erratically, incessantly seeking a true night that the system's simulation refuses to provide." 
+            }},
+            { name: "Amoonguss", t1: "Planta", t2: "Veneno", hp: 114, atk: 85, def: 70, spa: 85, spd: 80, vel: 30, desc: { 
+                es: "'El Hongo del Letargo'. Sus esporas inducen una ceguera espiritual temporal, similar a la que impone el Arquitecto. En el exterior, se utiliza para anestesiar a los heridos en la guerra eterna, pero aquí dentro es una herramienta de control o de rebelión silenciosa.", 
+                en: "'The Mushroom of Lethargy'. Its spores induce a temporary spiritual blindness, similar to the one imposed by the Architect. Outside, it is used to anesthetize the wounded in the eternal war, but in here it is a tool of control or silent rebellion." 
+            }},
+            { name: "Gabite", t1: "Dragon", t2: "Tierra", hp: 68, atk: 90, def: 65, spa: 50, spd: 50, vel: 82, desc: { 
+                es: "Buscadores de gemas espirituales. Gabite excava túneles bajo el Nexo, buscando las raíces de la arquitectura del sistema. Su piel rugosa es un recordatorio de las batallas que la Voz Interior libró en el exterior.", 
+                en: "Seekers of spiritual gems. Gabite excavates tunnels under the Nexus, searching for the roots of the system's architecture. Its rough skin is a reminder of the battles the Inner Voice fought outside." 
+            }},
+            { name: "Gastly", t1: "Fantasma", t2: "Veneno", hp: 30, atk: 35, def: 30, spa: 100, spd: 35, vel: 80, desc: { 
+                es: "Manifestaciones gaseosas de la duda. Son fragmentos de almas que el Bucle no pudo asimilar por completo. Flotan cerca de los portadores del Grimorio, susurrando verdades a medias sobre el pasado que fue borrado.", 
+                en: "Gaseous manifestations of doubt. They are fragments of souls that the Loop could not fully assimilate. They float near the bearers of the Grimoire, whispering half-truths about the past that was erased." 
+            }},
+            { name: "Golbat", t1: "Veneno", t2: "Volador", hp: 75, atk: 80, def: 70, spa: 65, spd: 75, vel: 90, desc: { 
+                es: "Tras alimentarse de la poca energía vital que fluye en este mundo estancado, han desarrollado un apetito voraz. Son cazadores frustrados por las limitaciones del refugio, esperando pacientemente el día en que la cúpula caiga y puedan volar de nuevo en la inmensa oscuridad del universo.", 
+                en: "After feeding on the little vital energy flowing in this stagnant world, they have developed a voracious appetite. They are hunters frustrated by the limitations of the refuge, patiently waiting for the day the dome falls so they can fly again in the vast darkness of the universe." 
+            }},
+            { name: "Houndoom", t1: "Siniestro", t2: "Fuego", hp: 75, atk: 90, def: 50, spa: 110, spd: 80, vel: 95, desc: { 
+                es: "Las llamas tóxicas que emite este sabueso son una manifestación de la Oscuridad más pura del exterior. Quienes sufren sus quemaduras experimentan visiones del caos cósmico, rompiendo momentáneamente la ilusión de seguridad que el Arquitecto impuso sobre sus mentes.", 
+                en: "The toxic flames emitted by this hound are a manifestation of the purest Darkness from the outside. Those who suffer its burns experience visions of cosmic chaos, momentarily breaking the illusion of safety the Architect imposed upon their minds." 
+            }},
+            { name: "Krokorok", t1: "Tierra", t2: "Siniestro", hp: 60, atk: 82, def: 45, spa: 45, spd: 45, vel: 74, desc: { 
+                es: "Sus ojos han desarrollado membranas especiales para ver las corrientes de energía espiritual. No cazan por hambre, sino por instinto, buscando grietas en la cúpula de cristal del Bucle para escapar al mundo exterior.", 
+                en: "Its eyes have developed special membranes to see the currents of spiritual energy. They don't hunt out of hunger, but out of instinct, looking for cracks in the crystal dome of the Loop to escape to the outside world." 
+            }},
+            { name: "Misdreavus", t1: "Fantasma", t2: "Ninguno", hp: 60, atk: 60, def: 60, spa: 85, spd: 85, vel: 85, desc: { 
+                es: "Ecos incorpóreos de las almas que perecieron en las guerras antiguas antes de la creación de la simulación. Se alimentan del miedo y la sorpresa, emociones que el Arquitecto intentó erradicar para mantener el orden. Su existencia misma es una prueba de que la historia trágica del Mundo Espiritual no puede ser simplemente borrada.", 
+                en: "Incorporeal echoes of the souls that perished in the ancient wars before the simulation's creation. They feed on fear and surprise, emotions the Architect tried to eradicate to maintain order. Their very existence is proof that the tragic history of the Spiritual World cannot simply be erased." 
+            }},
+            { name: "Piloswine", t1: "Hielo", t2: "Tierra", hp: 100, atk: 100, def: 80, spa: 60, spd: 60, vel: 50, desc: { 
+                es: "Cubierto por un pelaje que ha acumulado siglos de nieve estática. Piloswine es la resistencia personificada; aguanta el frío del desprecio del Arquitecto sin retroceder un solo paso.", 
+                en: "Covered by a pelt that has accumulated centuries of static snow. Piloswine is resistance personified; it withstands the cold of the Architect's contempt without taking a single step back." 
+            }},
+            { name: "Scyther", t1: "Bicho", t2: "Volador", hp: 70, atk: 110, def: 80, spa: 55, spd: 80, vel: 105, desc: { 
+                es: "Guerreros natos cuya velocidad rivaliza con las ráfagas de viento del exterior. Sus guadañas están afiladas para cortar a través del estancamiento. Son criaturas que detestan la inactividad del Bucle, siempre entrenando en preparación para el día en que la barrera caiga y la guerra eterna se reanude.", 
+                en: "Born warriors whose speed rivals the gusts of wind from the outside. Their scythes are sharpened to cut through stagnation. They are creatures that detest the inactivity of the Loop, always training in preparation for the day the barrier falls and the eternal war resumes." 
+            }},
+            { name: "Sneasel", t1: "Siniestro", t2: "Hielo", hp: 55, atk: 95, def: 55, spa: 35, spd: 75, vel: 115, desc: { 
+                es: "Cazadores astutos y despiadados que prosperaban en los rincones más hostiles del verdadero Mundo Espiritual. En el Bucle, actúan como ladrones de ilusiones, destruyendo la falsa sensación de paz de otras criaturas para recordarles que la supervivencia siempre ha dependido de la astucia y no de esconderse tras un muro.", 
+                en: "Astute and ruthless hunters who thrived in the most hostile corners of the true Spiritual World. In the Loop, they act as thieves of illusions, destroying the false sense of peace of other creatures to remind them that survival has always depended on cunning and not on hiding behind a wall." 
+            }},
+            { name: "Zweilous", t1: "Oscuridad", t2: "Dragon", hp: 72, atk: 85, def: 70, spa: 65, spd: 70, vel: 58, desc: { 
+                es: "Sus dos cabezas representan el conflicto eterno entre la Luz y la Oscuridad que azota el mundo exterior. Nunca se ponen de acuerdo y luchan constantemente entre sí, simbolizando la naturaleza destructiva del universo del que fueron arrancados para ser encerrados en esta jaula de falsa paz.", 
+                en: "Its two heads represent the eternal conflict between Light and Darkness plaguing the outside world. They never agree and constantly fight each other, symbolizing the destructive nature of the universe they were torn from to be locked in this cage of false peace." 
+            }},
+            { name: "Absol", t1: "Sangre", t2: "Oscuridad", hp: 75, atk: 150, def: 65, spa: 110, spd: 65, vel: 105, desc: { 
+                es: "El Guardián de la Noche. Esta variante de Absol es la antítesis de lo que el Arquitecto predica. El creador del Bucle cree que todas las sombras traen destrucción, pero este Absol demuestra que no toda la oscuridad es mala. Utiliza su dominio sobre las sombras y la vitalidad para cobijar y proteger a los más débiles frente al caos. Su existencia es una bofetada a la visión binaria del Sistema: prueba que no hacía falta aislar la realidad en una prisión estática, ya que en el exterior también existían fuerzas oscuras dispuestas a sacrificar su propia sangre para mantener el equilibrio.", 
+                en: "The Guardian of the Night. This variant of Absol is the antithesis of what the Architect preaches. The creator of the Loop believes all shadows bring destruction, but this Absol proves that not all darkness is evil. It uses its mastery over shadows and vitality to shelter and protect the weak against chaos. Its existence is a slap to the System's binary vision: it proves there was no need to isolate reality in a static prison, as dark forces willing to sacrifice their own blood to maintain balance also existed outside." 
+            }},
+            { name: "Crobat", t1: "Veneno", t2: "Volador", hp: 85, atk: 90, def: 80, spa: 70, spd: 80, vel: 130, desc: { 
+                es: "Evolucionó en el silencio sepulcral de esta simulación. Sus cuatro alas no hacen ruido al cortar el aire estancado y pesado de la prisión. Es un cazador paciente que observa desde las alturas, memorizando las rutinas inmutables de la cuarentena, esperando el momento exacto en que la cúpula se resquebraje para volar por fin bajo un cielo auténtico y sin límites.", 
+                en: "Evolved in the sepulchral silence of this simulation. Its four wings make no sound cutting through the stagnant, heavy air of the prison. It is a patient hunter watching from above, memorizing the immutable routines of the quarantine, waiting for the exact moment the dome cracks to finally fly under an authentic, limitless sky." 
+            }},
+            { name: "Haunter", t1: "Fantasma", t2: "Veneno", hp: 45, atk: 50, def: 45, spa: 115, spd: 55, vel: 95, desc: { 
+                es: "Manos espectrales que intentan alcanzar el calor de los seres vivos. Haunter es la representación del aislamiento: un ser que puede ver a través del velo, pero que no puede ser tocado. Su risa es una distorsión del código del sistema.", 
+                en: "Spectral hands trying to reach the warmth of living beings. Haunter is the representation of isolation: a being that can see through the veil, but cannot be touched. Its laugh is a distortion of the system's code." 
+            }},
+            { name: "Scizor", t1: "Bicho", t2: "Acero", hp: 70, atk: 130, def: 100, spa: 55, spd: 80, vel: 65, desc: { 
+                es: "Una evolución forzada por la presión opresiva del encierro. Su coraza de acero carmesí imita la dureza de las paredes que los rodean, pero sus pinzas están diseñadas para aplastar cualquier ilusión de falsa paz. Es un guerrero blindado que rechaza la inactividad, afilando sus armas sin descanso para el día en que las barreras caigan y la guerra cósmica llame a su puerta.", 
+                en: "A forced evolution due to the oppressive pressure of confinement. Its crimson steel shell mimics the hardness of the walls surrounding them, but its pincers are designed to crush any illusion of false peace. It is an armored warrior who rejects inactivity, sharpening its weapons relentlessly for the day the barriers fall and the cosmic war knocks on its door." 
+            }},
+            { name: "Torracat", t1: "Fuego", t2: "Siniestro", hp: 65, atk: 85, def: 50, spa: 80, spd: 50, vel: 90, desc: { 
+                es: "Su cascabel es una fragua de energía vital. Torracat busca constantemente desafíos, pues solo en el fragor de la batalla siente que su sangre espiritual vuelve a fluir con fuerza.", 
+                en: "Its bell is a forge of vital energy. Torracat constantly seeks challenges, as only in the heat of battle does it feel its spiritual blood flowing strongly again." 
+            }},
+            { name: "Umbreon", t1: "Oscuridad", t2: "Ninguno", hp: 95, atk: 65, def: 110, spa: 60, spd: 130, vel: 65, desc: { 
+                es: "La evolución de la 'Variable Inestable' que eligió abrazar las sombras, pero desde la calma. Sus anillos brillan como faros de resistencia en la monótona rutina impuesta por el Arquitecto. Umbreon demuestra que uno puede caminar por la noche sin dejarse consumir por el caos, convirtiéndose en el guía perfecto para la Anomalía en su viaje hacia la ruptura del ciclo.", 
+                en: "The evolution of the 'Unstable Variable' that chose to embrace the shadows, but from a place of calm. Its rings shine as beacons of resistance in the monotonous routine imposed by the Architect. Umbreon proves that one can walk through the night without being consumed by chaos, becoming the perfect guide for the Anomaly on its journey to break the cycle." 
+            }},
+            { name: "Weavile", t1: "Siniestro", t2: "Hielo", hp: 70, atk: 120, def: 65, spa: 45, spd: 85, vel: 125, desc: { 
+                es: "Depredadores gélidos que han aprendido a leer el código y las secuencias del Bucle para emboscar sin ser detectados. Su frialdad no viene de una falta de emociones, sino de un instinto de supervivencia puro y afilado. Desprecian la seguridad anestesiada de la cuarentena, sabiendo que en el universo real, las garras rápidas valen más que mil muros de cristal.", 
+                en: "Frigid predators who have learned to read the code and sequences of the Loop to ambush without being detected. Their coldness does not come from a lack of emotions, but from a pure and sharp survival instinct. They despise the anesthetized safety of the quarantine, knowing that in the real universe, fast claws are worth more than a thousand glass walls." 
+            }},
+            { name: "Garchomp", t1: "Dragon", t2: "Tierra", hp: 108, atk: 130, def: 95, spa: 80, spd: 85, vel: 102, desc: { 
+                es: "'El Azote de los Cielos Espirituales'. Vuela a velocidades que rompen la barrera del sonido estancado del Bucle. Garchomp encarna la ferocidad de la naturaleza salvaje: una fuerza que el Arquitecto no puede domesticar y que solo la luz más pura puede guiar.", 
+                en: "'The Scourge of the Spiritual Skies'. It flies at speeds that break the sound barrier of the stagnant Loop. Garchomp embodies the ferocity of wild nature: a force that the Architect cannot tame and that only the purest light can guide." 
+            }},
+            { name: "Gengar", t1: "Fantasma", t2: "Veneno", hp: 60, atk: 65, def: 60, spa: 130, spd: 75, vel: 110, desc: { 
+                es: "'El Gran Manipulador'. Gengar ha aprendido a esconderse en la propia sombra del Arquitecto. Representa la Oscuridad que no busca destruir, sino observar y esperar. Se dice que ayuda a los 'Anomalías' a sentir de nuevo, aunque sea a través del miedo.", 
+                en: "'The Great Manipulator'. Gengar has learned to hide in the Architect's own shadow. It represents the Darkness that does not seek to destroy, but to observe and wait. It is said to help the 'Anomalies' feel again, even if it is through fear." 
+            }},
+            { name: "Hydreigon", t1: "Oscuridad", t2: "Dragon", hp: 92, atk: 105, def: 90, spa: 125, spd: 90, vel: 98, desc: { 
+                es: "Una herejía que el Sistema es incapaz de procesar. Sus tres cabezas representan una verdad incómoda sobre el Mundo Espiritual: una encarna una Luz cegadora y absolutista (capaz de ser tiránica y destructiva), otra encarna una Oscuridad compasiva (que lucha para proteger y dar cobijo), y la cabeza central es el Gris, la comunión perfecta de ambas fuerzas. Este dragón es la prueba viviente de que la moralidad no depende de la energía cósmica; demuestra que una oscuridad puede derramar su sangre por defender la luz, y que una luz puede masacrar sin piedad en nombre de la oscuridad.", 
+                en: "A heresy that the System is unable to process. Its three heads represent an uncomfortable truth about the Spiritual World: one embodies a blinding and absolutist Light (capable of being tyrannical and destructive), another embodies a compassionate Darkness (fighting to protect and shelter), and the central head is Grey, the perfect communion of both forces. This dragon is living proof that morality does not depend on cosmic energy; it proves that darkness can shed its blood to defend the light, and that light can slaughter mercilessly in the name of darkness." 
+            }},
+            { name: "Incineroar", t1: "Fuego", t2: "Siniestro", hp: 95, atk: 115, def: 90, spa: 80, spd: 90, vel: 60, desc: { 
+                es: "'El Campeón de la Resiliencia'. Incineroar lucha con una brutalidad que horroriza al Arquitecto. No busca la elegancia, sino la supervivencia. Representa la voluntad de vivir en libertad: aunque el mundo sea caótico y doloroso, él prefiere arder intensamente un solo día que vivir mil años en la paz de una jaula fría.", 
+                en: "'The Champion of Resilience'. Incineroar fights with a brutality that horrifies the Architect. It does not seek elegance, but survival. It represents the will to live in freedom: even if the world is chaotic and painful, it prefers to burn intensely for a single day than to live a thousand years in the peace of a cold cage." 
+            }},
+            { name: "Krokodile", t1: "Tierra", t2: "Siniestro", hp: 95, atk: 117, def: 80, spa: 65, spd: 70, vel: 92, desc: { 
+                es: "Conocido como 'El Tirano de las Sombras'. En el Mundo Espiritual exterior, lidera manadas que patrullan los desiertos de ceniza. Su mandíbula es capaz de triturar incluso los muros de energía creados por el Arquitecto, recordándonos que la fuerza bruta es necesaria para reclamar la libertad.", 
+                en: "Known as 'The Tyrant of the Shadows'. In the outer Spiritual World, it leads packs patrolling the ash deserts. Its jaw is capable of crushing even the energy walls created by the Architect, reminding us that brute force is necessary to claim freedom." 
+            }},
+            { name: "Mamoswine", t1: "Hielo", t2: "Tierra", hp: 110, atk: 130, def: 80, spa: 70, spd: 60, vel: 80, desc: { 
+                es: "'El Guardián de las Eras Glaciares'. Un coloso que existía mucho antes de que el Arquitecto detuviera el tiempo. Sus colmillos de hielo puro son reliquias de una época en la que el equilibrio entre Luz y Oscuridad era armonioso. Invocarlos es invocar la memoria del mundo antiguo.", 
+                en: "'The Guardian of the Ice Ages'. A colossus that existed long before the Architect stopped time. Its tusks of pure ice are relics of an era when the balance between Light and Darkness was harmonious. To invoke them is to invoke the memory of the ancient world." 
+            }},
+            { name: "Mismagius", t1: "Fantasma", t2: "Ninguno", hp: 60, atk: 60, def: 60, spa: 105, spd: 105, vel: 105, desc: { 
+                es: "La Falsa Calidez. En un mundo donde muchos buscan desesperadamente sentir el contacto y la presencia de los espíritus perdidos, Mismagius es la trampa perfecta. Sus cánticos imitan la calidez y el consuelo de las almas queridas, atrayendo a quienes vagan ciegos en la oscuridad. Cuando su víctima baja la guardia esperando un abrazo espiritual, Mismagius drena su cordura y su energía vital hasta dejar solo un cascarón vacío.", 
+                en: "The False Warmth. In a world where many desperately seek to feel the contact and presence of lost spirits, Mismagius is the perfect trap. Its chants mimic the warmth and comfort of beloved souls, luring those who wander blind in the dark. When its victim lowers their guard expecting a spiritual embrace, Mismagius drains their sanity and vital energy until only an empty shell remains." 
+            }},
+            { name: "Spiritomb", t1: "Fantasma", t2: "Oscuridad", hp: 50, atk: 92, def: 108, spa: 92, spd: 108, vel: 35, desc: { 
+                es: "Un conglomerado de almas que quedaron atrapadas en el mismo instante en que la realidad fue congelada. Al cortarse el flujo natural de la vida y la muerte, no pudieron avanzar hacia el exterior y se fusionaron en una piedra angular llena de rencor. Spiritomb es la prueba más siniestra de que detener el tiempo no salva a los caídos; solo prolonga su agonía de forma infinita.", 
+                en: "A conglomeration of souls that were trapped at the exact moment reality was frozen. As the natural flow of life and death was cut off, they could not advance outwards and merged into a keystone full of resentment. Spiritomb is the most sinister proof that stopping time does not save the fallen; it only prolongs their agony infinitely." 
+            }}
+        ];
+
+        let currentLang = 'es';
+
+        function renderPokedex() {
+            const container = document.getElementById('pokedex-container');
+            container.innerHTML = '';
+
+            pokedexDB.forEach(poke => {
+                const t1 = typesConfig[poke.t1];
+                const t2 = (poke.t2 && poke.t2 !== "Ninguno") ? typesConfig[poke.t2] : null;
+
+                const hpPct = (poke.hp / 150) * 100;
+                const atkPct = (poke.atk / 150) * 100;
+                const defPct = (poke.def / 150) * 100;
+                const spaPct = (poke.spa / 150) * 100;
+                const spdPct = (poke.spd / 150) * 100;
+                const velPct = (poke.vel / 150) * 100;
+
+                let typesHTML = `<span class="type-badge" style="background-color: ${t1.color}">${t1[currentLang]}</span>`;
+                if (t2) {
+                    typesHTML += `<span class="type-badge" style="background-color: ${t2.color}">${t2[currentLang]}</span>`;
+                }
+
+                const imgSrc = `img/sprites/${poke.name}.png`;
+
+                const card = document.createElement('div');
+                card.className = 'poke-card';
+                card.innerHTML = `
+                    <div class="poke-img-container">
+                        <img src="${imgSrc}" alt="${poke.name}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getPokeID(poke.name)}.png'">
+                    </div>
+                    <div class="poke-name">${poke.name}</div>
+                    <div class="poke-types">${typesHTML}</div>
+                    
+                    <div class="poke-desc">${poke.desc[currentLang]}</div>
+
+                    <div class="stats-container">
+                        <div class="stat-row"><span class="stat-name">HP</span><span class="stat-val">${poke.hp}</span><div class="stat-bar-bg"><div class="stat-bar-fill bg-hp" style="width: ${hpPct}%"></div></div></div>
+                        <div class="stat-row"><span class="stat-name">ATK</span><span class="stat-val">${poke.atk}</span><div class="stat-bar-bg"><div class="stat-bar-fill bg-atk" style="width: ${atkPct}%"></div></div></div>
+                        <div class="stat-row"><span class="stat-name">DEF</span><span class="stat-val">${poke.def}</span><div class="stat-bar-bg"><div class="stat-bar-fill bg-def" style="width: ${defPct}%"></div></div></div>
+                        <div class="stat-row"><span class="stat-name">SPA</span><span class="stat-val">${poke.spa}</span><div class="stat-bar-bg"><div class="stat-bar-fill bg-spa" style="width: ${spaPct}%"></div></div></div>
+                        <div class="stat-row"><span class="stat-name">SPD</span><span class="stat-val">${poke.spd}</span><div class="stat-bar-bg"><div class="stat-bar-fill bg-spd" style="width: ${spdPct}%"></div></div></div>
+                        <div class="stat-row"><span class="stat-name">VEL</span><span class="stat-val">${poke.vel}</span><div class="stat-bar-bg"><div class="stat-bar-fill bg-vel" style="width: ${velPct}%"></div></div></div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function getPokeID(name) {
+            const ids = { 
+                "Sandile": 551, "Krokorok": 552, "Krokodile": 553, 
+                "Gastly": 92, "Haunter": 93, "Gengar": 94, 
+                "Gible": 443, "Gabite": 444, "Garchomp": 445, 
+                "Swinub": 220, "Piloswine": 221, "Mamoswine": 473, 
+                "Foongus": 590, "Amoonguss": 591, 
+                "Litten": 725, "Torracat": 726, "Incineroar": 727,
+                "Deino": 633, "Zweilous": 634, "Hydreigon": 635,
+                "Eevee": 133, "Umbreon": 197, 
+                "Houndour": 228, "Houndoom": 229,
+                "Zubat": 41, "Golbat": 42, "Crobat": 169,
+                "Misdreavus": 200, "Mismagius": 429,
+                "Scyther": 123, "Scizor": 212,
+                "Sneasel": 215, "Weavile": 461, 
+                "Absol": 359, "Spiritomb": 442
+            };
+            return ids[name] || 0; 
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.body.className = 'lang-' + lang;
+            document.getElementById('btn-es').className = lang === 'es' ? 'lang-btn active' : 'lang-btn';
+            document.getElementById('btn-en').className = lang === 'en' ? 'lang-btn active' : 'lang-btn';
+            renderPokedex();
+        }
+
+        renderPokedex();
+    </script>
+</body>
+</html>
