@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alfabeto Ancestral - Pokémon Artani</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body.lang-en .lang-es { display: none !important; }
+        body.lang-es .lang-en { display: none !important; }
+
+        .content-box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 900px;
+            width: 90%;
+            margin: 20px auto;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 { color: #bc84ee; text-transform: uppercase; text-align: center; letter-spacing: 2px;}
+        p { color: #cbd5e1; line-height: 1.6; text-align: center; margin-bottom: 30px; }
+
+        /* Cuadrícula del Alfabeto */
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .rune-card {
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 15px 10px;
+            text-align: center;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .rune-card:hover { transform: translateY(-3px); border-color: #bc84ee; }
+        
+        .rune-char { font-size: 28px; color: #bc84ee; display: block; margin-bottom: 5px; font-weight: bold;}
+        .latin-char { font-size: 14px; color: #94a3b8; font-weight: bold; text-transform: uppercase;}
+
+        /* Traductor Interactivo */
+        .translator-container {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: inherit;
+            resize: none;
+            box-sizing: border-box;
+        }
+
+        textarea:focus { outline: none; border-color: #bc84ee; }
+
+        .output-box {
+            min-height: 80px;
+            background: #1e293b;
+            border: 1px dashed #bc84ee;
+            color: #bc84ee;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 22px;
+            word-wrap: break-word;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body class="lang-es">
+
+    <div class="lang-toggle">
+        <button id="btn-es" class="lang-btn active" onclick="setLanguage('es')">ES</button>
+        <button id="btn-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
+    </div>
+
+    <header class="main-header">
+        <h1>Pokémon Artani - Wiki Oficial</h1>
+        <div class="main-nav">
+            <a href="index.html" class="main-tab"><span class="lang-es">Inicio</span><span class="lang-en">Home</span></a>
+            <a href="historia.html" class="main-tab"><span class="lang-es">Historia</span><span class="lang-en">Lore</span></a>
+            <a href="manual.html" class="main-tab"><span class="lang-es">Manual</span><span class="lang-en">Manual</span></a>
+            <a href="grimorio.html" class="main-tab"><span class="lang-es">Guía Combate</span><span class="lang-en">Combat Guide</span></a>
+            <a href="pokedex.html" class="main-tab"><span class="lang-es">Pokédex</span><span class="lang-en">Pokédex</span></a>
+            <a href="alfabeto.html" class="main-tab active-tab"><span class="lang-es">Alfabeto</span><span class="lang-en">Alphabet</span></a>
+        </div>
+    </header>
+
+    <div class="content-box">
+        <h2>
+            <span class="lang-es">Códice de la Anomalía</span>
+            <span class="lang-en">Codex of the Anomaly</span>
+        </h2>
+        <p>
+            <span class="lang-es">El idioma nativo de los elfos oscuros. Usa esta tabla para descifrar los mensajes ocultos en el Mundo Espiritual.</span>
+            <span class="lang-en">The native language of the dark elves. Use this chart to decipher hidden messages within the Spiritual World.</span>
+        </p>
+
+        <div class="alphabet-grid" id="alphabet-grid"></div>
+
+        <h2 style="margin-top: 40px; font-size: 18px;">
+            <span class="lang-es">Herramienta de Decodificación</span>
+            <span class="lang-en">Decoding Tool</span>
+        </h2>
+        
+        <div class="translator-container">
+            <textarea id="inputText" placeholder="Escribe aquí para traducir..." oninput="translateText()"></textarea>
+            <div class="output-box" id="outputText">...</div>
+        </div>
+    </div>
+
+    <script>
+        // Diccionario Rúnico
+        const runeMap = {
+            'A': 'ᚨ', 'B': 'ᛒ', 'C': 'ᚲ', 'D': 'ᛞ', 'E': 'ᛖ',
+            'F': 'ᚠ', 'G': 'ᚷ', 'H': 'ᚺ', 'I': 'ᛁ', 'J': 'ᛃ',
+            'K': 'ᚴ', 'L': 'ᛚ', 'M': 'ᛗ', 'N': 'ᚾ', 'O': 'ᛟ',
+            'P': 'ᛈ', 'Q': 'ᛩ', 'R': 'ᚱ', 'S': 'ᛋ', 'T': 'ᛏ',
+            'U': 'ᚢ', 'V': 'ᚡ', 'W': 'ᚹ', 'X': 'ᛪ', 'Y': 'ᚣ', 'Z': 'ᛉ'
+        };
+
+        // Generar las cartas del alfabeto
+        const grid = document.getElementById('alphabet-grid');
+        for (const [letter, rune] of Object.entries(runeMap)) {
+            const card = document.createElement('div');
+            card.className = 'rune-card';
+            card.innerHTML = `<span class="rune-char">${rune}</span><span class="latin-char">${letter}</span>`;
+            grid.appendChild(card);
+        }
+
+        // Traductor en tiempo real
+        function translateText() {
+            const input = document.getElementById('inputText').value.toUpperCase();
+            let result = '';
+            for (let char of input) {
+                // Mapeamos tildes para que el jugador no se frustre
+                if (char === 'Á') char = 'A';
+                if (char === 'É') char = 'E';
+                if (char === 'Í') char = 'I';
+                if (char === 'Ó') char = 'O';
+                if (char === 'Ú') char = 'U';
+                
+                result += runeMap[char] || char; // Si no existe en el dic (como un espacio o coma), lo deja igual
+            }
+            document.getElementById('outputText').innerText = result || '...';
+        }
+
+        // Sistema de idiomas
+        function setLanguage(lang) {
+            document.body.className = 'lang-' + lang;
+            document.getElementById('btn-es').className = lang === 'es' ? 'lang-btn active' : 'lang-btn';
+            document.getElementById('btn-en').className = lang === 'en' ? 'lang-btn active' : 'lang-btn';
+            
+            document.getElementById('inputText').placeholder = lang === 'es' ? 'Escribe aquí para traducir...' : 'Type here to translate...';
+        }
+    </script>
+</body>
+</html>

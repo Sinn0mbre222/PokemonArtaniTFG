@@ -40,9 +40,11 @@
             <a href="grimorio.html" class="main-tab">
                 <span class="lang-es">Guía de Combate</span><span class="lang-en">Combat Guide</span>
             </a>
-
             <a href="pokedex.html" class="main-tab">
                 <span class="lang-es">Pokédex Artani</span><span class="lang-en">Artani Pokédex</span>
+            </a>
+            <a href="alfabeto.html" class="main-tab">
+                <span class="lang-es">Alfabeto Ancestral</span><span class="lang-en">Ancestral Alphabet</span>
             </a>
         </div>
     </header>
@@ -95,7 +97,10 @@
 
     <script>
         function setLanguage(lang) {
+            // Cambiamos la clase del body para activar las reglas CSS
             document.body.className = 'lang-' + lang;
+            
+            // Actualizamos visualmente los botones
             document.getElementById('btn-es').className = lang === 'es' ? 'lang-btn active' : 'lang-btn';
             document.getElementById('btn-en').className = lang === 'en' ? 'lang-btn active' : 'lang-btn';
         }

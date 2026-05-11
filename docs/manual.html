@@ -1,16 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon Artani - Manual</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        body.lang-en .lang-es { display: none !important; }
-        body.lang-es .lang-en { display: none !important; }
-        .control-key { background: #334155; padding: 2px 8px; border-radius: 4px; border: 1px solid #475569; font-family: monospace; color: #bc84ee; font-weight: bold;}
+        body.lang-en .lang-es {
+            display: none !important;
+        }
+
+        body.lang-es .lang-en {
+            display: none !important;
+        }
+
+        .control-key {
+            background: #334155;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid #475569;
+            font-family: monospace;
+            color: #bc84ee;
+            font-weight: bold;
+        }
     </style>
 </head>
+
 <body class="lang-es">
 
     <div class="lang-toggle">
@@ -21,36 +37,45 @@
     <header class="main-header">
         <h1>Pokémon Artani - Wiki Oficial</h1>
         <div class="main-nav">
-            <a href="index.html" class="main-tab">
+            <a href="index.html" class="main-tab" id="nav-index">
                 <span class="lang-es">Inicio / Descarga</span><span class="lang-en">Home / Download</span>
             </a>
-            <a href="historia.html" class="main-tab">
+            <a href="historia.html" class="main-tab" id="nav-historia">
                 <span class="lang-es">Historia y Lore</span><span class="lang-en">History & Lore</span>
             </a>
-            <a href="manual.html" class="main-tab active-tab">
+            <a href="manual.html" class="main-tab" id="nav-manual">
                 <span class="lang-es">Manual de Juego</span><span class="lang-en">Game Manual</span>
             </a>
-            <a href="grimorio.html" class="main-tab">
+            <a href="grimorio.html" class="main-tab" id="nav-grimorio">
                 <span class="lang-es">Guía de Combate</span><span class="lang-en">Combat Guide</span>
+            </a>
+            <a href="pokedex.html" class="main-tab" id="nav-pokedex">
+                <span class="lang-es">Pokédex Artani</span><span class="lang-en">Artani Pokédex</span>
+            </a>
+            <a href="alfabeto.html" class="main-tab" id="nav-alfabeto">
+                <span class="lang-es">Alfabeto Ancestral</span><span class="lang-en">Ancestral Alphabet</span>
             </a>
         </div>
     </header>
 
     <div class="container">
-        
+
         <div class="content-box">
             <h2>
                 <span class="lang-es">Navegación General</span>
                 <span class="lang-en">General Navigation</span>
             </h2>
             <ul class="lang-es">
-                <li><span class="control-key">Esc</span>: Abrir el Menú Principal (Guardar Partida, Cargar Partida, Ajustes, Volver).</li>
-                <li><span class="control-key">W A S D</span> o <span class="control-key">Flechas</span>: Navegar por los menús y mover al personaje.</li>
+                <li><span class="control-key">Esc</span>: Abrir el Menú Principal (Guardar Partida, Cargar Partida,
+                    Ajustes, Volver).</li>
+                <li><span class="control-key">W A S D</span> o <span class="control-key">Flechas</span>: Navegar por los
+                    menús y mover al personaje.</li>
                 <li><span class="control-key">Enter</span>: Confirmar selección o pulsar botones.</li>
             </ul>
             <ul class="lang-en">
                 <li><span class="control-key">Esc</span>: Open Main Menu (Save Game, Load Game, Settings, Back).</li>
-                <li><span class="control-key">W A S D</span> or <span class="control-key">Arrow Keys</span>: Navigate through menus and move the character.</li>
+                <li><span class="control-key">W A S D</span> or <span class="control-key">Arrow Keys</span>: Navigate
+                    through menus and move the character.</li>
                 <li><span class="control-key">Enter</span>: Confirm selection or press buttons.</li>
             </ul>
         </div>
@@ -73,25 +98,34 @@
                 <span class="lang-es">El Altar (Gestión y Movimientos)</span>
                 <span class="lang-en">The Altar (Pokémon Management & Moves)</span>
             </h2>
-            <p class="lang-es">Para acceder a las funciones del Altar, sitúate frente a él y pulsa <span class="control-key">E</span>.</p>
-            <p class="lang-en">To access the Altar features, stand in front of it and press <span class="control-key">E</span>.</p>
+            <p class="lang-es">Para acceder a las funciones del Altar, sitúate frente a él y pulsa <span
+                    class="control-key">E</span>.</p>
+            <p class="lang-en">To access the Altar features, stand in front of it and press <span
+                    class="control-key">E</span>.</p>
 
             <h3 style="color: #94a3b8; font-size: 16px; margin-top: 20px;">
                 <span class="lang-es">Ver y Cambiar Movimientos</span>
                 <span class="lang-en">Viewing Learned Moves</span>
             </h3>
             <ul class="lang-es">
-                <li>Pulsa <span class="control-key">E</span> en el Altar para ver la lista de movimientos aprendidos por tu Pokémon hasta su nivel actual.</li>
-                <li>Pulsa <span class="control-key">Z</span> dentro de esta pestaña para empezar a navegar por la lista.</li>
-                <li>Pulsa <span class="control-key">Z</span> de nuevo para confirmar el movimiento que deseas modificar.</li>
-                <li>Usa <span class="control-key">W</span> y <span class="control-key">S</span> para desplazarte y elegir el nuevo movimiento.</li>
+                <li>Pulsa <span class="control-key">E</span> en el Altar para ver la lista de movimientos aprendidos por
+                    tu Pokémon hasta su nivel actual.</li>
+                <li>Pulsa <span class="control-key">Z</span> dentro de esta pestaña para empezar a navegar por la lista.
+                </li>
+                <li>Pulsa <span class="control-key">Z</span> de nuevo para confirmar el movimiento que deseas modificar.
+                </li>
+                <li>Usa <span class="control-key">W</span> y <span class="control-key">S</span> para desplazarte y
+                    elegir el nuevo movimiento.</li>
                 <li>Pulsa <span class="control-key">Z</span> una última vez para finalizar el cambio.</li>
             </ul>
             <ul class="lang-en">
-                <li>Press <span class="control-key">E</span> while at the Altar to view the list of moves learned by your Pokémon up to its current level.</li>
-                <li>Press <span class="control-key">Z</span> within this tab to start navigating through the move list.</li>
+                <li>Press <span class="control-key">E</span> while at the Altar to view the list of moves learned by
+                    your Pokémon up to its current level.</li>
+                <li>Press <span class="control-key">Z</span> within this tab to start navigating through the move list.
+                </li>
                 <li>Press <span class="control-key">Z</span> again to confirm the move you wish to modify.</li>
-                <li>Use <span class="control-key">W</span> and <span class="control-key">S</span> to cycle through and select the move you want to change.</li>
+                <li>Use <span class="control-key">W</span> and <span class="control-key">S</span> to cycle through and
+                    select the move you want to change.</li>
                 <li>Press <span class="control-key">Z</span> one last time to finalize the change.</li>
             </ul>
 
@@ -100,12 +134,18 @@
                 <span class="lang-en">Swapping Team & Shortcuts</span>
             </h3>
             <ul class="lang-es">
-                <li><strong>Cambiar:</strong> En el menú del Altar, pulsa <span class="control-key">Z</span> sobre un Pokémon para seleccionarlo. Navega hasta el reemplazo y pulsa <span class="control-key">Z</span> para confirmar.</li>
-                <li><strong>Atajo de Pestañas:</strong> En la sección izquierda del libro, desplázate hacia abajo y pulsa <span class="control-key">2</span> para cambiar de menú.</li>
+                <li><strong>Cambiar:</strong> En el menú del Altar, pulsa <span class="control-key">Z</span> sobre un
+                    Pokémon para seleccionarlo. Navega hasta el reemplazo y pulsa <span class="control-key">Z</span>
+                    para confirmar.</li>
+                <li><strong>Atajo de Pestañas:</strong> En la sección izquierda del libro, desplázate hacia abajo y
+                    pulsa <span class="control-key">2</span> para cambiar de menú.</li>
             </ul>
             <ul class="lang-en">
-                <li><strong>Swap:</strong> Within the Altar menu, press <span class="control-key">Z</span> over a Pokémon to select it for swapping. Navigate to the replacement slot and press <span class="control-key">Z</span> to confirm.</li>
-                <li><strong>Menu Shortcut:</strong> On the left-hand page/section, scroll down and press <span class="control-key">2</span> to switch between menu tabs.</li>
+                <li><strong>Swap:</strong> Within the Altar menu, press <span class="control-key">Z</span> over a
+                    Pokémon to select it for swapping. Navigate to the replacement slot and press <span
+                        class="control-key">Z</span> to confirm.</li>
+                <li><strong>Menu Shortcut:</strong> On the left-hand page/section, scroll down and press <span
+                        class="control-key">2</span> to switch between menu tabs.</li>
             </ul>
         </div>
 
@@ -115,10 +155,12 @@
                 <span class="lang-en">The Grimoire (Pokédex)</span>
             </h2>
             <ul class="lang-es">
-                <li><span class="control-key">A</span> y <span class="control-key">D</span>: Usa estas teclas para pasar las páginas y moverte entre las diferentes secciones del Grimorio.</li>
+                <li><span class="control-key">A</span> y <span class="control-key">D</span>: Usa estas teclas para pasar
+                    las páginas y moverte entre las diferentes secciones del Grimorio.</li>
             </ul>
             <ul class="lang-en">
-                <li><span class="control-key">A</span> and <span class="control-key">D</span>: Use these keys to flip through pages and move between different sections of the Grimoire.</li>
+                <li><span class="control-key">A</span> and <span class="control-key">D</span>: Use these keys to flip
+                    through pages and move between different sections of the Grimoire.</li>
             </ul>
         </div>
 
@@ -132,4 +174,5 @@
         }
     </script>
 </body>
+
 </html>
