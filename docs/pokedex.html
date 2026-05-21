@@ -480,12 +480,12 @@
                 const t1 = typesConfig[poke.t1];
                 const t2 = (poke.t2 && poke.t2 !== "Ninguno") ? typesConfig[poke.t2] : null;
 
-                const hpPct = (poke.hp / 150) * 100;
-                const atkPct = (poke.atk / 150) * 100;
-                const defPct = (poke.def / 150) * 100;
-                const spaPct = (poke.spa / 150) * 100;
-                const spdPct = (poke.spd / 150) * 100;
-                const velPct = (poke.vel / 150) * 100;
+                const hpPct = (poke.hp / 255) * 100;
+                const atkPct = (poke.atk / 255) * 100;
+                const defPct = (poke.def / 255) * 100;
+                const spaPct = (poke.spa / 255) * 100;
+                const spdPct = (poke.spd / 255) * 100;
+                const velPct = (poke.vel / 255) * 100;
 
                 let typesHTML = `<span class="type-badge" style="background-color: ${t1.color}">${t1[currentLang]}</span>`;
                 if (t2) {
