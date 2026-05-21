@@ -33,9 +33,6 @@
             transition: transform 0.3s, border-color 0.3s;
             position: relative;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         .poke-card:hover {
@@ -44,8 +41,8 @@
         }
 
         .poke-img-container {
-            width: 140px; /* Tamaño fijo para evitar saltos */
-            height: 140px; /* Tamaño fijo para evitar saltos */
+            width: 120px;
+            height: 120px;
             margin: 0 auto 15px auto;
             background: rgba(0, 0, 0, 0.3);
             border-radius: 50%;
@@ -56,9 +53,8 @@
         }
 
         .poke-img-container img {
-            max-width: 85%;
-            max-height: 85%;
-            object-fit: contain; /* Obliga a la imagen a no deformar el contenedor */
+            max-width: 100%;
+            max-height: 100%;
             image-rendering: pixelated;
         }
 
@@ -90,9 +86,7 @@
             color: #cbd5e1;
             margin-bottom: 20px;
             line-height: 1.5;
-            height: 75px; /* Altura fija */
-            overflow-y: auto; /* Añade scroll si el texto es muy largo */
-            width: 100%;
+            min-height: 60px;
         }
 
         /* Barras de Estadísticas */
@@ -101,8 +95,6 @@
             background: rgba(0, 0, 0, 0.2);
             padding: 15px;
             border-radius: 8px;
-            width: 100%;
-            box-sizing: border-box;
         }
 
         .stat-row {
@@ -138,12 +130,29 @@
             border-radius: 4px;
         }
 
-        .bg-hp { background: #ef4444; }
-        .bg-atk { background: #f97316; }
-        .bg-def { background: #eab308; }
-        .bg-spa { background: #3b82f6; }
-        .bg-spd { background: #22c55e; }
-        .bg-vel { background: #ec4899; }
+        .bg-hp {
+            background: #ef4444;
+        }
+
+        .bg-atk {
+            background: #f97316;
+        }
+
+        .bg-def {
+            background: #eab308;
+        }
+
+        .bg-spa {
+            background: #3b82f6;
+        }
+
+        .bg-spd {
+            background: #22c55e;
+        }
+
+        .bg-vel {
+            background: #ec4899;
+        }
     </style>
 </head>
 
@@ -194,19 +203,6 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN DE GITHUB PARA EXCLUSIVOS
-        // Usamos raw.githubusercontent para obtener directamente la imagen, no la web de GitHub
-        const ARTANI_BASE_URL = "https://raw.githubusercontent.com/Sinn0mbre222/PokemonArtaniTFG/main/pokes/";
-        
-        // Mapeo de exclusividad y carpetas
-        const artaniExclusives = {
-            "Lunaris": "iniciales",
-            "Andrigon": "iniciales",
-            "Vladmir": "iniciales",
-            "Khornigon": "jefe",
-            "Abracitos": "jefe"
-        };
-
         const typesConfig = {
             "Normal": { es: "Normal", en: "Normal", color: "#A8A878" },
             "Fuego": { es: "Fuego", en: "Fire", color: "#F08030" },
@@ -474,13 +470,15 @@
             }
         ];
 
+        let currentLang = 'es';
+
         function renderPokedex() {
             const container = document.getElementById('pokedex-container');
             container.innerHTML = '';
 
             pokedexDB.forEach(poke => {
                 const t1 = typesConfig[poke.t1];
-                const t2 = (poke.t2 && poke.t2 !== "Ninguno" && poke.t2 !== "null") ? typesConfig[poke.t2] : null;
+                const t2 = (poke.t2 && poke.t2 !== "Ninguno") ? typesConfig[poke.t2] : null;
 
                 const hpPct = (poke.hp / 255) * 100;
                 const atkPct = (poke.atk / 255) * 100;
@@ -489,12 +487,12 @@
                 const spdPct = (poke.spd / 255) * 100;
                 const velPct = (poke.vel / 255) * 100;
 
-                let imgSrc;
-                if (artaniExclusives[poke.name]) {
-                    imgSrc = `${ARTANI_BASE_URL}${artaniExclusives[poke.name]}/${poke.name}.png`;
-                } else {
-                    imgSrc = `img/sprites/${poke.name}.png`;
+                let typesHTML = `<span class="type-badge" style="background-color: ${t1.color}">${t1[currentLang]}</span>`;
+                if (t2) {
+                    typesHTML += `<span class="type-badge" style="background-color: ${t2.color}">${t2[currentLang]}</span>`;
                 }
+
+                const imgSrc = `img/sprites/${poke.name}.png`;
 
                 const card = document.createElement('div');
                 card.className = 'poke-card';
@@ -503,38 +501,21 @@
                         <img src="${imgSrc}" alt="${poke.name}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getPokeID(poke.name)}.png'">
                     </div>
                     <div class="poke-name">${poke.name}</div>
-                    <div class="poke-types">${renderTypes(t1, t2)}</div>
+                    <div class="poke-types">${typesHTML}</div>
+                    
                     <div class="poke-desc">${poke.desc[currentLang]}</div>
+
                     <div class="stats-container">
-                        ${renderStat("HP", poke.hp, "hp", hpPct)}
-                        ${renderStat("ATK", poke.atk, "atk", atkPct)}
-                        ${renderStat("DEF", poke.def, "def", defPct)}
-                        ${renderStat("SPA", poke.spa, "spa", spaPct)}
-                        ${renderStat("SPD", poke.spd, "spd", spdPct)}
-                        ${renderStat("VEL", poke.vel, "vel", velPct)}
+                        <div class="stat-row"><span class="stat-name">HP</span><span class="stat-val">${poke.hp}</span><div class="stat-bar-bg"><div class="stat-bar-fill bg-hp" style="width: ${hpPct}%"></div></div></div>
+                        <div class="stat-row"><span class="stat-name">ATK</span><span class="stat-val">${poke.atk}</span><div class="stat-bar-bg"><div class="stat-bar-fill bg-atk" style="width: ${atkPct}%"></div></div></div>
+                        <div class="stat-row"><span class="stat-name">DEF</span><span class="stat-val">${poke.def}</span><div class="stat-bar-bg"><div class="stat-bar-fill bg-def" style="width: ${defPct}%"></div></div></div>
+                        <div class="stat-row"><span class="stat-name">SPA</span><span class="stat-val">${poke.spa}</span><div class="stat-bar-bg"><div class="stat-bar-fill bg-spa" style="width: ${spaPct}%"></div></div></div>
+                        <div class="stat-row"><span class="stat-name">SPD</span><span class="stat-val">${poke.spd}</span><div class="stat-bar-bg"><div class="stat-bar-fill bg-spd" style="width: ${spdPct}%"></div></div></div>
+                        <div class="stat-row"><span class="stat-name">VEL</span><span class="stat-val">${poke.vel}</span><div class="stat-bar-bg"><div class="stat-bar-fill bg-vel" style="width: ${velPct}%"></div></div></div>
                     </div>
                 `;
                 container.appendChild(card);
             });
-        }
-
-        function renderTypes(t1, t2) {
-            let html = `<span class="type-badge" style="background-color: ${t1.color}">${t1[currentLang]}</span>`;
-            if (t2) {
-                html += `<span class="type-badge" style="background-color: ${t2.color}">${t2[currentLang]}</span>`;
-            }
-            return html;
-        }
-
-        function renderStat(label, val, className, pct) {
-            return `
-            <div class="stat-row">
-                <span class="stat-name">${label}</span>
-                <span class="stat-val">${val}</span>
-                <div class="stat-bar-bg">
-                    <div class="stat-bar-fill bg-${className}" style="width: ${pct}%"></div>
-                </div>
-            </div>`;
         }
 
         function getPokeID(name) {
@@ -565,7 +546,6 @@
             renderPokedex();
         }
 
-        // Se ejecuta al cargar
         renderPokedex();
     </script>
 </body>

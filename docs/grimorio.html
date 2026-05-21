@@ -537,6 +537,20 @@
             color: #94a3b8;
             font-style: italic;
         }
+
+        /* Ocultar inglés por defecto */
+        .lang-en {
+            display: none;
+        }
+
+        /* Cuando el idioma es inglés, ocultar español y mostrar inglés */
+        body.lang-en .lang-es {
+            display: none;
+        }
+
+        body.lang-en .lang-en {
+            display: inline;
+        }
     </style>
 </head>
 
@@ -1106,6 +1120,8 @@
         // ==========================================
         function setLanguage(lang) {
             currentLang = lang;
+                document.body.className = `lang-${lang}`;
+
             document.getElementById('btn-es').className = lang === 'es' ? 'lang-btn active' : 'lang-btn';
             document.getElementById('btn-en').className = lang === 'en' ? 'lang-btn active' : 'lang-btn';
 
